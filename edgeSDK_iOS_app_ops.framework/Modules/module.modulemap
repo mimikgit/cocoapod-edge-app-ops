@@ -1,0 +1,11 @@
+framework module edgeSDK_iOS_app_ops {
+  umbrella header "edgeSDK_iOS_app_ops.h"
+
+  export *
+  module * { export * }
+}
+
+module edgeSDK_iOS_app_ops.Swift {
+    header "edgeSDK_iOS_app_ops-Swift.h"
+    requires objc
+}
