@@ -203,6 +203,18 @@ SWIFT_PROTOCOL("_TtP19edgeSDK_iOS_app_ops18EdgeAppOpsProtocol_")
 - (void)edgeStatusChangedWithStatus:(EdgeStatus * _Nonnull)status;
 @end
 
+
+SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops8EdgeInfo")
+@interface EdgeInfo : NSObject
+@property (nonatomic, readonly, copy) NSString * _Nonnull description;
+@property (nonatomic, readonly, copy) NSString * _Null_unspecified nodeId;
+@property (nonatomic, readonly, copy) NSString * _Null_unspecified nodeName;
+@property (nonatomic, readonly, copy) NSString * _Null_unspecified version;
+@property (nonatomic, readonly, copy) NSString * _Null_unspecified accountId;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_DEPRECATED_MSG("-init is unavailable");
+@end
+
 typedef SWIFT_ENUM(NSInteger, EdgeState) {
   EdgeStateUnknown = 0,
   EdgeStateStarting = 1,
@@ -246,17 +258,19 @@ typedef SWIFT_ENUM(NSInteger, StateChangingEvent) {
   StateChangingEventUnknown = 8,
 };
 
+@class EdgeConfig;
 
 SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops19edgeSDK_iOS_app_ops")
 @interface edgeSDK_iOS_app_ops : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-- (void)startEdgeWithDeviceId:(NSString * _Nonnull)deviceId delegate:(id <EdgeAppOpsProtocol> _Nonnull)delegate completion:(void (^ _Nonnull)(EdgeStatus * _Nullable, NSError * _Nullable error))completion;
+- (void)startEdgeWithNodeId:(NSString * _Nonnull)nodeId delegate:(id <EdgeAppOpsProtocol> _Nonnull)delegate completion:(void (^ _Nonnull)(EdgeStatus * _Nullable, NSError * _Nullable error))completion;
 - (void)stopEdgeWithCompletion:(void (^ _Nonnull)(EdgeStatus * _Nullable, NSError * _Nullable error))completion;
 - (void)deployMicroserviceWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken config:(MicroserviceDeploymentConfig * _Nonnull)config completion:(void (^ _Nonnull)(DeploymentStatus * _Nullable, NSError * _Nullable error))completion;
 - (void)removeMicroserviceWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken config:(MicroserviceDeploymentConfig * _Nonnull)config completion:(void (^ _Nonnull)(DeploymentStatus * _Nullable, NSError * _Nullable error))completion;
 - (void)getDeployedImagesWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken config:(MicroserviceDeploymentConfig * _Nonnull)config completion:(void (^ _Nonnull)(id _Nonnull, NSError * _Nullable error))completion;
 - (void)getDeployedContainersWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken config:(MicroserviceDeploymentConfig * _Nonnull)config completion:(void (^ _Nonnull)(id _Nonnull, NSError * _Nullable error))completion;
-- (void)nodeNamePrint;
+- (void)getConfig:(void (^ _Nonnull)(EdgeConfig * _Nullable response, NSError * _Nullable error))completion;
+- (void)getInfo:(void (^ _Nonnull)(EdgeInfo * _Nullable response, NSError * _Nullable error))completion;
 @end
 
 
