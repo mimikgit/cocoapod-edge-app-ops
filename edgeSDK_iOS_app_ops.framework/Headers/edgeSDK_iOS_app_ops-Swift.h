@@ -164,7 +164,6 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #endif
 #if __has_feature(modules)
 @import ObjectiveC;
-@import Foundation;
 #endif
 
 #pragma clang diagnostic ignored "-Wproperty-attribute-mismatch"
@@ -182,6 +181,7 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 # pragma pop_macro("any")
 #endif
 
+/// enum of potential micro service deployment states.
 typedef SWIFT_ENUM(NSInteger, DeploymentState) {
   DeploymentStateImageLoaded = 0,
   DeploymentStateContainerLoaded = 1,
@@ -190,6 +190,12 @@ typedef SWIFT_ENUM(NSInteger, DeploymentState) {
 };
 
 
+/// micro service status object. Essentially it provides information about the status of a micro service deployment.
+/// <ul>
+///   <li>
+///     deploymentState: Current micro service deployment state.
+///   </li>
+/// </ul>
 SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops16DeploymentStatus")
 @interface DeploymentStatus : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
@@ -198,12 +204,34 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops16DeploymentStatus")
 
 @class EdgeStatus;
 
+/// EdgeAppOpsProtocol protocol for edgeSDK lifecycle change callbacks
+/// note:
+/// See StateChangingEvent and EdgeState for details.
 SWIFT_PROTOCOL("_TtP19edgeSDK_iOS_app_ops18EdgeAppOpsProtocol_")
 @protocol EdgeAppOpsProtocol
+/// edgeSDK lifecycle change callback to a registered EdgeAppOpsProtocol protocol delegate.
+///
+/// returns:
+/// EdgeStatus object
 - (void)edgeStatusChangedWithStatus:(EdgeStatus * _Nonnull)status;
 @end
 
 
+/// Provides edgeSDK instance specific EdgeInfo object. Essentially provides a read only EdgeInfo object with edgeSDK instance parameters (nodeId, nodeName, version, accountId) in a completion block.
+/// <ul>
+///   <li>
+///     nodeId: A unique node (device) identifier. It is assigned by the host application during startEdge.
+///   </li>
+///   <li>
+///     nodeName: A node (device) name. It is derived from the device’s system name.
+///   </li>
+///   <li>
+///     _ version: edgeSDK version number.
+///   </li>
+///   <li>
+///     accountId: Currently associated account identifier. It is assigned during account authorization.
+///   </li>
+/// </ul>
 SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops8EdgeInfo")
 @interface EdgeInfo : NSObject
 @property (nonatomic, readonly, copy) NSString * _Nonnull description;
@@ -215,6 +243,7 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops8EdgeInfo")
 + (nonnull instancetype)new SWIFT_DEPRECATED_MSG("-init is unavailable");
 @end
 
+/// enum of potential edgeSDK states.
 typedef SWIFT_ENUM(NSInteger, EdgeState) {
   EdgeStateUnknown = 0,
   EdgeStateStarting = 1,
@@ -226,6 +255,15 @@ typedef SWIFT_ENUM(NSInteger, EdgeState) {
 
 enum StateChangingEvent : NSInteger;
 
+/// edgeSDK status object used for EdgeAppOpsProtocol delegate callbacks. Essentially it provides information about the current edgeSDK lifecycle state and the reason behind the lifecycle state change.
+/// <ul>
+///   <li>
+///     edgeState: Current edgeSDK state.
+///   </li>
+///   <li>
+///     stateChangingEvent: Reason behind the edgeSDK lifecycle change..
+///   </li>
+/// </ul>
 SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops10EdgeStatus")
 @interface EdgeStatus : NSObject
 @property (nonatomic) enum EdgeState edgeState;
@@ -235,17 +273,33 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops10EdgeStatus")
 @end
 
 
+/// Micro service configuration object. Used for micro service deployment.
+/// <ul>
+///   <li>
+///     name: Name of your micro service. Used to construct paths.
+///   </li>
+///   <li>
+///     apiRootUrl: A path to deploy your micro service to.
+///   </li>
+///   <li>
+///     imagePath: An file system path to the micro service image tar file. Usually located in the application’s bundle.
+///   </li>
+///   <li>
+///     envVariables: Any extra environment variables for your micro service.
+///   </li>
+/// </ul>
 SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops28MicroserviceDeploymentConfig")
 @interface MicroserviceDeploymentConfig : NSObject
-- (nonnull instancetype)initWithName:(NSString * _Nonnull)name apiRootUrl:(NSString * _Nonnull)apiRootUrl imageUrl:(NSURL * _Nonnull)imageUrl envVariables:(NSDictionary<NSString *, NSString *> * _Nonnull)envVariables OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithName:(NSString * _Nonnull)name apiRootUrl:(NSString * _Nonnull)apiRootUrl imagePath:(NSString * _Nonnull)imagePath envVariables:(NSDictionary<NSString *, NSString *> * _Nonnull)envVariables OBJC_DESIGNATED_INITIALIZER;
 @property (nonatomic, copy) NSString * _Nonnull name;
 @property (nonatomic, copy) NSString * _Nonnull apiRootUrl;
-@property (nonatomic, copy) NSURL * _Nonnull imageUrl;
+@property (nonatomic, copy) NSString * _Nonnull imagePath;
 @property (nonatomic, copy) NSDictionary<NSString *, NSString *> * _Nonnull envVariables;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_DEPRECATED_MSG("-init is unavailable");
 @end
 
+/// enum of potential edgeSDK lifecycle changing events.
 typedef SWIFT_ENUM(NSInteger, StateChangingEvent) {
   StateChangingEventUIApplicationDidFinishLaunching = 0,
   StateChangingEventUIApplicationDidBecomeActive = 1,
@@ -260,17 +314,111 @@ typedef SWIFT_ENUM(NSInteger, StateChangingEvent) {
 
 @class EdgeConfig;
 
+/// edgeSDK_iOS_app_ops wrapper can be used to simplify the following edgeSDK operations:
+/// <ul>
+///   <li>
+///     startEdge and register a protocol delegate. (One call edgeSDK initialization with just one nodeId parameter and a completion block, as well as a protocol delegate registration to receive calls about edgeSDK lifecycle changes)
+///   </li>
+///   <li>
+///     stopEdge (One call edgeSDK shutdown with a completion block)
+///   </li>
+///   <li>
+///     deployMicroservice (One call micro service deployment with a completion block via a simple configuration object; edge access token is required)
+///   </li>
+///   <li>
+///     removeMicroservice (One call deployed micro service removal with a completion block via a simple configuration object; edge access token is required)
+///   </li>
+///   <li>
+///     getDeployedImages (Returns debug information about currently deployed/uploaded images in a completion block)
+///   </li>
+///   <li>
+///     getDeployedContainers (Returns debug information about currently deployed/created containers in a completion block)
+///   </li>
+///   <li>
+///     getInfo (Returns a read only EdgeInfo object with edgeSDK instance parameters (nodeId, nodeName, version, accountId) in a completion block)
+///   </li>
+///   <li>
+///     getConfig (Returns a read only EdgeConfig object with edgeSDK configuration parameters (nodeId, nodeName, edgeServiceLink, workingDir, backend) in a completion block)
+///   </li>
+/// </ul>
 SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops19edgeSDK_iOS_app_ops")
 @interface edgeSDK_iOS_app_ops : NSObject
+/// edgeSDK_iOS_app_ops initialization. Keep a strong reference to it.
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-- (void)startEdgeWithNodeId:(NSString * _Nonnull)nodeId delegate:(id <EdgeAppOpsProtocol> _Nonnull)delegate completion:(void (^ _Nonnull)(EdgeStatus * _Nullable, NSError * _Nullable error))completion;
-- (void)stopEdgeWithCompletion:(void (^ _Nonnull)(EdgeStatus * _Nullable, NSError * _Nullable error))completion;
-- (void)deployMicroserviceWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken config:(MicroserviceDeploymentConfig * _Nonnull)config completion:(void (^ _Nonnull)(DeploymentStatus * _Nullable, NSError * _Nullable error))completion;
-- (void)removeMicroserviceWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken config:(MicroserviceDeploymentConfig * _Nonnull)config completion:(void (^ _Nonnull)(DeploymentStatus * _Nullable, NSError * _Nullable error))completion;
-- (void)getDeployedImagesWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken config:(MicroserviceDeploymentConfig * _Nonnull)config completion:(void (^ _Nonnull)(id _Nonnull, NSError * _Nullable error))completion;
-- (void)getDeployedContainersWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken config:(MicroserviceDeploymentConfig * _Nonnull)config completion:(void (^ _Nonnull)(id _Nonnull, NSError * _Nullable error))completion;
-- (void)getConfig:(void (^ _Nonnull)(EdgeConfig * _Nullable response, NSError * _Nullable error))completion;
+/// Starts edgeSDK and registers a EdgeAppOpsProtocol delegate to receive edgeSDK lifecycle change callbacks. Essentially a one call edgeSDK initialization with one parameter (nodeId) and a completion block, as well as a protocol delegate registration to receive callbacks when edgeSDK lifecycle changes.
+/// important:
+/// Make sure to keep nodeId unique and tied to a specific device. Repeating calls are ignored until stopEdge is called once.
+/// warning:
+/// It usually takes 3 seconds for the completion block to be called.
+/// note:
+/// stopEdge does the opposite of this function.
+/// <em>Example:</em>
+/// \code
+/// self.appOpsWrapper = edgeSDK_iOS_app_ops.init()
+/// self.appOpsWrapper.startEdge(nodeId: UUID().uuidString, delegate: self, completion: { (status,error) in
+/// })
+///
+/// \endcode\param nodeId Unique node identifier.
+///
+/// \param delegate EdgeAppOpsProtocol delegate to receive edgeSDK lifecycle change notifications.
+///
+/// \param completion Completion block returning EdgeStatus or Error.
+///
+- (void)startEdgeWithNodeId:(NSString * _Nonnull)nodeId delegate:(id <EdgeAppOpsProtocol> _Nonnull)delegate completion:(void (^ _Nonnull)(EdgeStatus * _Nullable status, NSError * _Nullable error))completion;
+/// Stops edgeSDK and removes the EdgeAppOpsProtocol delegate registration. Essentially a one call edgeSDK shutdown with a completion block.
+/// important:
+/// Repeating calls are ignored until startEdge is called once.
+/// warning:
+/// It usually takes 3 seconds for the completion block to be called.
+/// note:
+/// This will stop the edgeSDK lifecycle change notifications.
+- (void)stopEdgeWithCompletion:(void (^ _Nonnull)(EdgeStatus * _Nullable status, NSError * _Nullable error))completion;
+/// Deploys a micro service according to a configuration object. Essentially a one call micro service deployment with a completion block via a simple configuration object; edge access token is required.
+/// important:
+/// Repeating calls will overwrite already deployed micro services. Connected websockets will be destroyed.
+/// note:
+/// First the micro service image is uploaded, then the micro service container is created.
+/// todo:
+/// Comparing deployed micro services using a digest checksum
+/// \param edgeAccessToken Token retrieved from a sucessful authorization session.
+///
+/// \param config Micro service configuration object.
+///
+/// \param completion Completion block returning micro service DeploymentStatus or Error.
+///
+- (void)deployMicroserviceWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken config:(MicroserviceDeploymentConfig * _Nonnull)config completion:(void (^ _Nonnull)(DeploymentStatus * _Nullable status, NSError * _Nullable error))completion;
+/// Removes a deployed micro service according to a configuration object. Essentially a one call (previously deployed) micro service removal with a completion block via a simple configuration object; edge access token is required.
+/// important:
+/// Repeating calls will do nothing.
+/// note:
+/// First the micro service container is removed, then the micro service image is removed.
+/// \param edgeAccessToken Token retrieved from a sucessful authorization session.
+///
+/// \param config Micro service configuration object.
+///
+/// \param completion Completion block returning micro service DeploymentStatus or Error.
+///
+- (void)removeMicroserviceWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken config:(MicroserviceDeploymentConfig * _Nonnull)config completion:(void (^ _Nonnull)(DeploymentStatus * _Nullable status, NSError * _Nullable error))completion;
+/// Provides a list of currently uploaded micro service images. Essentially provides a debug information about currently deployed/uploaded images in a completion block.
+/// \param edgeAccessToken Token retrieved from a sucessful authorization session.
+///
+/// \param completion Completion block returning a array of uploaded micro service images or Error.
+///
+- (void)getDeployedImagesWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken completion:(void (^ _Nonnull)(id _Nonnull status, NSError * _Nullable error))completion;
+/// Provides a list of created micro service containers. Essentially provides a debug information about currently deployed/created containers in a completion block.
+/// \param edgeAccessToken Token retrieved from a sucessful authorization session.
+///
+/// \param completion Completion block returning a array of created micro service containers or Error.
+///
+- (void)getDeployedContainersWithEdgeAccessToken:(NSString * _Nonnull)edgeAccessToken completion:(void (^ _Nonnull)(id _Nonnull status, NSError * _Nullable error))completion;
+/// Provides an instance specific edgeSDK parameters EdgeInfo object. Essentially provides a read only EdgeInfo object with edgeSDK instance parameters (nodeId, nodeName, version, accountId) in a completion block.
+/// \param completion Completion block returning EdgeInfo or Error.
+///
 - (void)getInfo:(void (^ _Nonnull)(EdgeInfo * _Nullable response, NSError * _Nullable error))completion;
+/// Provides a generic edgeSDK configuration parameters EdgeConfig object. Essentially provides a read only EdgeConfig object with edgeSDK configuration parameters (nodeId, nodeName, edgeServiceLink, workingDir, backend) in a completion block.
+/// \param completion Completion block returning EdgeConfig or Error.
+///
+- (void)getConfig:(void (^ _Nonnull)(EdgeConfig * _Nullable response, NSError * _Nullable error))completion;
 @end
 
 
