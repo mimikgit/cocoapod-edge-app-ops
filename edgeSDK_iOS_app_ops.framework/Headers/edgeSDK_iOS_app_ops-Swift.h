@@ -427,8 +427,6 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops19edgeSDK_iOS_app_ops")
 
 
 
-
-
 #if __has_attribute(external_source_symbol)
 # pragma clang attribute pop
 #endif
