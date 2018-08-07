@@ -164,6 +164,7 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #endif
 #if __has_feature(modules)
 @import ObjectiveC;
+@import edgeSDK_iOS;
 #endif
 
 #pragma clang diagnostic ignored "-Wproperty-attribute-mismatch"
@@ -419,6 +420,20 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops19edgeSDK_iOS_app_ops")
 /// \param completion Completion block returning EdgeConfig or Error.
 ///
 - (void)getConfig:(void (^ _Nonnull)(EdgeConfig * _Nullable response, NSError * _Nullable error))completion;
+/// Provides a way to control the amount of logging output. mimik modules are using Apple’s unified logging system and the messages are tagged with [mimik] [module-name] and then the logging level [info] [error] [fault] [debug].
+/// note:
+/// Default level is info.
+/// note:
+/// Info level outputs [info] [error] and [fault] messages. It doesn’t output [debug] messages.
+/// note:
+/// Error level outputs [error] and [fault] messages. It doesn’t output [debug] messages.
+/// note:
+/// Debug level outputs all messages. [info], [error], [fault] and [debug].
+/// note:
+/// Off level doesn’t output any messages.
+/// \param level Requested logging level.
+///
++ (void)changeLoggingLevelToLevel:(enum MMKLogLevel)level;
 @end
 
 
