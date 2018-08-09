@@ -346,7 +346,7 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops19edgeSDK_iOS_app_ops")
 @interface edgeSDK_iOS_app_ops : NSObject
 /// edgeSDK_iOS_app_ops initialization. Keep a strong reference to it.
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-/// Starts edgeSDK and registers a EdgeAppOpsProtocol delegate to receive edgeSDK lifecycle change callbacks. Essentially a one call edgeSDK initialization with one parameter (nodeId) and a completion block, as well as a protocol delegate registration to receive callbacks when edgeSDK lifecycle changes.
+/// Starts edgeSDK and registers an optional EdgeAppOpsProtocol delegate to receive edgeSDK lifecycle change callbacks. Essentially a one call edgeSDK initialization with one parameter (nodeId) and a completion block, as well as a protocol delegate registration to receive callbacks when edgeSDK lifecycle changes.
 /// important:
 /// Make sure to keep nodeId unique and tied to a specific device. Repeating calls are ignored until stopEdge is called once.
 /// warning:
@@ -361,11 +361,11 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops19edgeSDK_iOS_app_ops")
 ///
 /// \endcode\param nodeId Unique node identifier.
 ///
-/// \param delegate EdgeAppOpsProtocol delegate to receive edgeSDK lifecycle change notifications.
+/// \param delegate An optional EdgeAppOpsProtocol delegate to receive edgeSDK lifecycle change notifications.
 ///
 /// \param completion Completion block returning EdgeStatus or Error.
 ///
-- (void)startEdgeWithNodeId:(NSString * _Nonnull)nodeId delegate:(id <EdgeAppOpsProtocol> _Nonnull)delegate completion:(void (^ _Nonnull)(EdgeStatus * _Nullable status, NSError * _Nullable error))completion;
+- (void)startEdgeWithNodeId:(NSString * _Nonnull)nodeId delegate:(id <EdgeAppOpsProtocol> _Nullable)delegate completion:(void (^ _Nonnull)(EdgeStatus * _Nullable status, NSError * _Nullable error))completion;
 /// Stops edgeSDK and removes the EdgeAppOpsProtocol delegate registration. Essentially a one call edgeSDK shutdown with a completion block.
 /// important:
 /// Repeating calls are ignored until startEdge is called once.
