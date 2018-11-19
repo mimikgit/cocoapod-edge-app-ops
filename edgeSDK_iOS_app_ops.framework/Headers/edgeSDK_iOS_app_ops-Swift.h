@@ -232,6 +232,12 @@ SWIFT_PROTOCOL("_TtP19edgeSDK_iOS_app_ops18EdgeAppOpsProtocol_")
 ///   <li>
 ///     accountId: Currently associated account identifier. It is assigned during account authorization.
 ///   </li>
+///   <li>
+///     linkLocalIp: IP address of the interface edgeSDK is currently bound to.
+///   </li>
+///   <li>
+///     supernodeTypeName: A unique supernode type name. It allows nodes to discovered compatible supernodes.
+///   </li>
 /// </ul>
 SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops8EdgeInfo")
 @interface EdgeInfo : NSObject
@@ -240,6 +246,8 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops8EdgeInfo")
 @property (nonatomic, readonly, copy) NSString * _Null_unspecified nodeName;
 @property (nonatomic, readonly, copy) NSString * _Null_unspecified version;
 @property (nonatomic, readonly, copy) NSString * _Null_unspecified accountId;
+@property (nonatomic, readonly, copy) NSString * _Null_unspecified linkLocalIp;
+@property (nonatomic, readonly, copy) NSString * _Null_unspecified supernodeTypeName;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_DEPRECATED_MSG("-init is unavailable");
 @end
