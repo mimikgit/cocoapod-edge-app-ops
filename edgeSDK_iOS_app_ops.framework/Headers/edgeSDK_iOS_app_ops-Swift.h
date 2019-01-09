@@ -430,6 +430,8 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops19edgeSDK_iOS_app_ops")
 ///
 - (void)getConfig:(void (^ _Nonnull)(EdgeConfig * _Nullable response, NSError * _Nullable error))completion;
 /// Updates edgeSDK with a CLLocation object containing the geographical location, altitude, speed and bearing of a device.
+/// remark:
+/// This requires edgeSDK 1.3+
 /// \param edgeAccessToken account association token.
 ///
 /// \param location CLLocation object containing the geographical location and altitude of a device
