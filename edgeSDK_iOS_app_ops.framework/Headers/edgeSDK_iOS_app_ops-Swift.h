@@ -372,9 +372,17 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops19edgeSDK_iOS_app_ops")
 ///
 /// \param delegate An optional EdgeAppOpsProtocol delegate to receive edgeSDK lifecycle change notifications.
 ///
+/// \param optionalLicense For when you have an edgeSDK license for a backend other than the default one.
+///
 /// \param completion Completion block returning EdgeStatus or Error.
 ///
 - (void)startEdgeWithNodeId:(NSString * _Nonnull)nodeId delegate:(id <EdgeAppOpsProtocol> _Nullable)delegate completion:(void (^ _Nonnull)(EdgeStatus * _Nullable status, NSError * _Nullable error))completion;
+/// Specifies a custom edgeSDK license to be used for edgeSDK initialization.
+/// important:
+/// This license needs to be set BEFORE calling the startEdge API (which initalizes edgeSDK with, or without a custom license).
+/// \param customLicense Custom license value.
+///
+- (void)setCustomLicenseWithCustomLicense:(NSString * _Nonnull)customLicense;
 /// Stops edgeSDK and removes the EdgeAppOpsProtocol delegate registration. Essentially a one call edgeSDK shutdown with a completion block.
 /// important:
 /// Repeating calls are ignored until startEdge is called once.
