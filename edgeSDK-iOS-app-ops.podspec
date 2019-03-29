@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   s.vendored_frameworks = "edgeSDK_iOS_app_ops.framework"
 
   s.dependency 'Alamofire'
-  s.dependency 'Starscream'
+  s.dependency 'Starscream', '~> 3.0.6'
   s.dependency 'SwiftyJSON'
   s.dependency 'edgeSDK-iOS', '~> 0.2.6'
 
