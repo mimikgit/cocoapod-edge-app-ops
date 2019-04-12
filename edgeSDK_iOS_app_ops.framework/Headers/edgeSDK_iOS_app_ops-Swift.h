@@ -443,6 +443,16 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops19edgeSDK_iOS_app_ops")
 /// note:
 /// This will stop the edgeSDK lifecycle change notifications.
 - (void)stopEdgeWithCompletion:(void (^ _Nonnull)(EdgeStateResult * _Nonnull))completion;
+/// This is the edge service link.
+///
+/// returns:
+/// edge service link.
+- (NSString * _Nonnull)edgeServiceLink SWIFT_WARN_UNUSED_RESULT;
+/// This is the edgeSDK WebSocket service link.
+///
+/// returns:
+/// WebSocket service link.
+- (NSString * _Nonnull)edgeWebSocketServiceLink SWIFT_WARN_UNUSED_RESULT;
 /// Deploys a micro service according to a configuration object. Essentially a one call micro service deployment with a completion block via a simple configuration object; edge access token is required.
 /// important:
 /// Repeating calls will overwrite already deployed micro services. Connected websockets will be destroyed.
