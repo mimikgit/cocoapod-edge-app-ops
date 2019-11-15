@@ -445,6 +445,23 @@ SWIFT_CLASS("_TtC19edgeSDK_iOS_app_ops19edgeSDK_iOS_app_ops")
 /// \param completion Completion block returning an EdgeStateResult object.
 ///
 - (void)startEdgeWithNodeId:(NSString * _Nonnull)nodeId delegate:(id <MMKEdgeAppOpsProtocol> _Nullable)delegate completion:(void (^ _Nonnull)(MMKEdgeStateResult * _Nonnull))completion;
+/// WARNING: This is an experimental API that automatically generates and stores the device node id in the keychain. Normally you’d want to manage the device node id at the application level, so please use the other startEdge API if you want to have a full control over the device node id value.
+/// Starts edgeSDK and registers an optional EdgeAppOpsProtocol delegate to receive edgeSDK lifecycle change callbacks. Essentially a one call edgeSDK initialization with one parameter (nodeId) and a completion block, as well as a protocol delegate registration to receive callbacks when edgeSDK lifecycle changes.
+/// important:
+/// Make sure to keep nodeId unique and tied to a specific device. Repeating calls are ignored until stopEdge is called once.
+/// warning:
+/// This is an experimental API that automatically generates and stores the device node id in the keychain. Normally you’d want to manage the device node id at the application level, so please use the other startEdge API if you want to have a full control over the device node id value.
+/// warning:
+/// It usually takes 3 seconds for the completion block to be called.
+/// note:
+/// stopEdge does the opposite of this function.
+/// \param delegate An optional EdgeAppOpsProtocol delegate to receive edgeSDK lifecycle change notifications.
+///
+/// \param optionalLicense For when you have an edgeSDK license for a backend other than the default one.
+///
+/// \param completion Completion block returning an EdgeStateResult object.
+///
+- (void)startEdgeWithDelegate:(id <MMKEdgeAppOpsProtocol> _Nullable)delegate completion:(void (^ _Nonnull)(MMKEdgeStateResult * _Nonnull))completion;
 /// Specifies a custom edgeSDK license to be used for edgeSDK initialization.
 /// important:
 /// This license needs to be set BEFORE calling the startEdge API (which initalizes edgeSDK with, or without a custom license).
